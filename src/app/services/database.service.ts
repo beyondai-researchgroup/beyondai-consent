@@ -2,7 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, timeout } from 'rxjs';
 
-const REQUEST_TIMEOUT_MS = 10_000;
+// Generous on purpose: the API runs on Render's free tier, which sleeps after ~15 min idle and
+// needs 30-50 s to wake up — a 10 s limit made the first click on an emailed link fail.
+const REQUEST_TIMEOUT_MS = 90_000;
 
 export interface ConsentSection {
   titleSr: string | null;
