@@ -1,0 +1,49 @@
+<div class="page-wrapper">
+  <div class="consent-container">
+    <header class="consent-header">
+      <h1 class="consent-heading">{{ 'CONSENT.HEADING' | translate }}</h1>
+      <p class="consent-research-title">{{ 'CONSENT.RESEARCH_TITLE' | translate }}</p>
+      <p class="consent-research-team">{{ 'CONSENT.RESEARCH_TEAM' | translate }}</p>
+    </header>
+
+    <div class="card consent-card">
+      @for (section of sections(); track $index) {
+        <section class="consent-section">
+          @if (section.title) {
+            <h2>{{ section.title }}</h2>
+          }
+          <p>{{ section.body }}</p>
+        </section>
+      }
+
+      <label class="toggle-switch consent-checkbox">
+        <input type="checkbox" [ngModel]="checked()" (ngModelChange)="checked.set($event)" />
+        <span class="toggle-track" aria-hidden="true"></span>
+        <span class="toggle-label">{{ checkboxText() ?? ('CONSENT.CHECKBOX_LABEL' | translate) }}</span>
+      </label>
+
+      @if (submitError() === 'NO_EMAIL') {
+        <p class="field-error">{{ 'CONSENT.ERROR_NO_EMAIL' | translate }}</p>
+      }
+      @if (submitError() === 'NOT_FOUND') {
+        <p class="field-error">{{ 'CONSENT.ERROR_NOT_FOUND' | translate }}</p>
+      }
+      @if (submitError() === 'SERVER_ERROR') {
+        <p class="field-error">{{ 'CONSENT.ERROR_SERVER' | translate }}</p>
+      }
+
+      <button
+        type="button"
+        class="btn-primary"
+        [disabled]="!checked() || isSubmitting()"
+        (click)="submit()"
+      >
+        @if (isSubmitting()) {
+          {{ 'CONSENT.SUBMIT_SENDING' | translate }}
+        } @else {
+          {{ 'CONSENT.SUBMIT' | translate }}
+        }
+      </button>
+    </div>
+  </div>
+</div>

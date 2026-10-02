@@ -1,0 +1,70 @@
+.consent-container {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.consent-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.consent-heading {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.consent-research-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 4px 0 0;
+}
+
+.consent-research-team {
+  font-size: 13px;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.consent-card {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.consent-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+}
+
+.consent-checkbox {
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+}
+
+.field-error {
+  font-size: 13px;
+  color: var(--color-error);
+  margin: 0;
+}

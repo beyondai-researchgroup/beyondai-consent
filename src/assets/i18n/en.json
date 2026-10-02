@@ -1,0 +1,71 @@
+{
+  "LOGIN": {
+    "TITLE": "BeyondAI Research Group",
+    "SUBTITLE": "Login and consent for research participation",
+    "LANG_LABEL": "Language",
+    "PARTICIPANT_LABEL": "Participant identification code",
+    "PARTICIPANT_PLACEHOLDER": "e.g. 001",
+    "PARTICIPANT_ERROR": "Enter your identification code.",
+    "PARTICIPANT_NOT_FOUND": "No participant found with this code.",
+    "CHECK_ERROR": "Error checking the participant. Please try again.",
+    "PERSONAL_LINK_REQUIRED": "This participant can only be accessed via the personal link you were emailed.",
+    "SUBMIT": "Continue",
+    "SUBMIT_CHECKING": "Checking…",
+    "RESEARCH_RESOLVING": "Loading…",
+    "RESEARCH_NOT_FOUND": "This link wasn't recognized. Check the address or contact the researcher.",
+    "RESEARCH_NOT_ACTIVE": "This link isn't active right now. Please contact the researcher."
+  },
+  "LINK": {
+    "LOADING": "Loading…",
+    "ERROR_TITLE": "This link doesn't work",
+    "ERROR_EXPIRED": "This link has expired. Contact the researcher for a new one.",
+    "ERROR_NOT_FOUND": "This link wasn't found, or has already been used.",
+    "ERROR_NOT_ACTIVE": "This link isn't active right now. Please contact the researcher.",
+    "ERROR_SERVER": "Error opening the link. Please try again."
+  },
+  "CONSENT": {
+    "HEADING": "Informed Consent Form for Participation in the Experiment",
+    "RESEARCH_TITLE": "Productivity and Beyond: Cognitive Effects of Working with Artificial Intelligence",
+    "RESEARCH_TEAM": "Andrej Katin, Nebojša Taušan, Vladimir Mandić - University of Novi Sad",
+    "SECTION1_TITLE": "1. Research Objective",
+    "SECTION1_TEXT": "The aim of this experiment is to examine how the use of AI-assisted tools affects cognitive load, thinking style, and the evaluation of professional tasks among software developers. Your participation helps us understand the interaction between humans and AI systems in the domain of software engineering.",
+    "SECTION2_TITLE": "2. Procedure Description",
+    "SECTION2_INTRO": "Participation in the research involves a single experimental session lasting 45 to 60 minutes. The session will take place in a controlled laboratory at the Faculty of Technical Sciences in Novi Sad.",
+    "SECTION2_TASK_LABEL": "Task:",
+    "SECTION2_TASK_TEXT": "You will be presented with professional tasks related to evaluating legacy code (e.g. reviewing Pull Requests), which you will solve using a simulated AI assistant.",
+    "SECTION2_MEASURE_LABEL": "Measurements:",
+    "SECTION2_MEASURE_TEXT": "While completing the tasks, an EEG device (electroencephalograph) will be used to record the electrical activity of your brain (brainwaves). In addition, you will be asked to fill out short self-assessment questionnaires.",
+    "SECTION2_EEG_LABEL": "Use of EEG:",
+    "SECTION2_EEG_TEXT": "EEG is a non-invasive and completely safe method. It is placed on the scalp and causes no pain.",
+    "SECTION3_TITLE": "3. Voluntary Participation and Right to Withdraw",
+    "SECTION3_P1": "Your participation is entirely voluntary.",
+    "SECTION3_P2": "You have the full right to stop the experiment at any time, without any explanation, and without any negative consequences for you.",
+    "SECTION3_P3": "If you withdraw, all data collected up to that point will be deleted.",
+    "SECTION4_TITLE": "4. Confidentiality and Anonymity of Data",
+    "SECTION4_P1": "All data collected during the research will be treated as strictly confidential and used exclusively for academic and research purposes.",
+    "SECTION4_P2": "Your first name, last name, and contact information will be kept separate from the experimental data.",
+    "SECTION4_P3": "Your individual results will not be published; only group-level, anonymized data will be used in publications.",
+    "SECTION5_TITLE": "5. Contact",
+    "SECTION5_TEXT": "For any questions or concerns regarding the research, you may contact us at: beyondai.researchgroup@gmail.com",
+    "CHECKBOX_LABEL": "I have read and understood the information provided above, and I voluntarily agree to participate in this research.",
+    "SUBMIT": "Submit",
+    "SUBMIT_SENDING": "Sending…",
+    "ERROR_NO_EMAIL": "Your email address was not found in the system. Please contact the researcher to have it added before you can continue.",
+    "ERROR_NOT_FOUND": "An error occurred - participant not found. Please refresh the page and try again.",
+    "ERROR_SERVER": "Error submitting your consent. Please try again."
+  },
+  "DONE": {
+    "TITLE": "Thank you!",
+    "TEXT": "If this is your first login, we've sent instructions and links to complete short questionnaires to your email address. If you already gave consent previously, the instructions are still in your inbox. If you can't find the email, please contact the researcher at beyondai.researchgroup@gmail.com."
+  },
+  "LINKS": {
+    "TITLE": "Your questionnaires",
+    "INTRO": "Click the button below for each questionnaire to open it. The order doesn't matter.",
+    "ITEM_LABEL": "Questionnaire {{n}}",
+    "TASK_LABEL": "Task",
+    "DEMOGRAPHIC_LABEL": "Demographic questionnaire",
+    "OPEN": "Open",
+    "COMPLETED": "Completed",
+    "NONE": "No questionnaires are currently available for this research."
+  }
+}

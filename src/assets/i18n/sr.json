@@ -1,0 +1,71 @@
+{
+  "LOGIN": {
+    "TITLE": "BeyondAI Research Group",
+    "SUBTITLE": "Prijava i pristanak za učešće u istraživanju",
+    "LANG_LABEL": "Jezik",
+    "PARTICIPANT_LABEL": "Identifikacioni kod učesnika",
+    "PARTICIPANT_PLACEHOLDER": "npr. 001",
+    "PARTICIPANT_ERROR": "Unesite identifikacioni kod.",
+    "PARTICIPANT_NOT_FOUND": "Učesnik sa ovim kodom nije pronađen.",
+    "CHECK_ERROR": "Greška pri proveri učesnika. Pokušajte ponovo.",
+    "PERSONAL_LINK_REQUIRED": "Ovom učesniku se može pristupiti samo preko ličnog linka koji ste dobili mejlom.",
+    "SUBMIT": "Nastavi",
+    "SUBMIT_CHECKING": "Proveravam…",
+    "RESEARCH_RESOLVING": "Učitavanje…",
+    "RESEARCH_NOT_FOUND": "Ovaj link nije prepoznat. Proverite adresu ili se obratite istraživaču.",
+    "RESEARCH_NOT_ACTIVE": "Ovaj link trenutno nije aktivan. Obratite se istraživaču."
+  },
+  "LINK": {
+    "LOADING": "Učitavanje…",
+    "ERROR_TITLE": "Link ne radi",
+    "ERROR_EXPIRED": "Ovaj link je istekao. Obratite se istraživaču za novi.",
+    "ERROR_NOT_FOUND": "Ovaj link nije pronađen ili je već iskorišćen.",
+    "ERROR_NOT_ACTIVE": "Ovaj link trenutno nije aktivan. Obratite se istraživaču.",
+    "ERROR_SERVER": "Greška pri otvaranju linka. Pokušajte ponovo."
+  },
+  "CONSENT": {
+    "HEADING": "Obrazac informisanog pristanka za učešće u eksperimentu",
+    "RESEARCH_TITLE": "Produktivnost i više od toga: kognitivni efekti rada uz veštačku inteligenciju",
+    "RESEARCH_TEAM": "Andrej Katin, Nebojša Taušan, Vladimir Mandić - Univerzitet u Novom Sadu",
+    "SECTION1_TITLE": "1. Cilj istraživanja",
+    "SECTION1_TEXT": "Cilj ovog eksperimenta je da se ispita kako korišćenje alata podržanih veštačkom inteligencijom utiče na kognitivno opterećenje, stil razmišljanja i procenu profesionalnih zadataka kod programera. Vaše učešće nam pomaže u razumevanju interakcije između čoveka i AI sistema u domenu softverskog inženjerstva.",
+    "SECTION2_TITLE": "2. Opis procedure",
+    "SECTION2_INTRO": "Učešće u istraživanju podrazumeva jednu eksperimentalnu sesiju koja traje 45 do 60 minuta. Sesija će se odvijati u kontrolisanoj laboratoriji na Fakultetu tehničkih nauka u Novom Sadu.",
+    "SECTION2_TASK_LABEL": "Zadatak:",
+    "SECTION2_TASK_TEXT": "Biće Vam predstavljeni profesionalni zadaci u vezi sa procenom legacy koda (npr. provera ispravnosti Pull Request-ova), koje ćete rešavati uz korišćenje simuliranog AI asistenta.",
+    "SECTION2_MEASURE_LABEL": "Merenja:",
+    "SECTION2_MEASURE_TEXT": "U toku rešavanja zadataka, biće korišćen EEG uređaj (Elektroencefalograf) za snimanje električne aktivnosti Vašeg mozga (moždanih talasa). Pored toga, bićete zamoljeni da popunite kratke upitnike za samoprocenu.",
+    "SECTION2_EEG_LABEL": "Korišćenje EEG-a:",
+    "SECTION2_EEG_TEXT": "EEG je neinvazivan i potpuno bezbedan metod. Postavlja se na kožu glave i ne izaziva nikakvu bol.",
+    "SECTION3_TITLE": "3. Dobrovoljnost učešća i pravo na odustajanje",
+    "SECTION3_P1": "Vaše učešće je potpuno dobrovoljno.",
+    "SECTION3_P2": "Imate puno pravo da u svakom trenutku prekinete eksperiment, bez ikakvog objašnjenja, i bez ikakvih negativnih posledica po Vas.",
+    "SECTION3_P3": "U slučaju odustajanja, svi podaci prikupljeni do tog trenutka biće izbrisani.",
+    "SECTION4_TITLE": "4. Poverljivost i anonimnost podataka",
+    "SECTION4_P1": "Svi podaci prikupljeni tokom istraživanja biće tretirani kao strogo poverljivi i korišćeni isključivo u akademske i istraživačke svrhe.",
+    "SECTION4_P2": "Vaše ime, prezime i kontakt informacije biće odvojene od eksperimentalnih podataka.",
+    "SECTION4_P3": "Vaši individualni rezultati neće biti objavljivani; u publikacijama će biti korišćeni isključivo grupni i anonimizovani podaci.",
+    "SECTION5_TITLE": "5. Kontakt",
+    "SECTION5_TEXT": "Za sva pitanja i nedoumice u vezi sa istraživanjem, možete nas kontaktirati putem mejl adrese: beyondai.researchgroup@gmail.com",
+    "CHECKBOX_LABEL": "Pročitao/la sam i razumeo/la sam gore navedene informacije i dobrovoljno pristajem da učestvujem u ovom istraživanju.",
+    "SUBMIT": "Pošalji",
+    "SUBMIT_SENDING": "Šaljem…",
+    "ERROR_NO_EMAIL": "Vaša email adresa nije pronađena u sistemu. Kontaktirajte istraživača kako bi je dodao pre nego što možete da nastavite.",
+    "ERROR_NOT_FOUND": "Došlo je do greške - učesnik nije pronađen. Osvežite stranicu i pokušajte ponovo.",
+    "ERROR_SERVER": "Greška pri slanju pristanka. Pokušajte ponovo."
+  },
+  "DONE": {
+    "TITLE": "Hvala vam!",
+    "TEXT": "Ako je ovo Vaša prva prijava, na Vašu email adresu smo poslali uputstva i linkove za popunjavanje kratkih upitnika. Ako ste ranije već dali pristanak, uputstva se i dalje nalaze u Vašem inboxu. Ako ne pronađete mejl, kontaktirajte istraživača na beyondai.researchgroup@gmail.com."
+  },
+  "LINKS": {
+    "TITLE": "Vaši upitnici",
+    "INTRO": "Kliknite na dugme ispod za svaki upitnik da biste ga otvorili. Redosled nije bitan.",
+    "ITEM_LABEL": "Upitnik {{n}}",
+    "TASK_LABEL": "Zadatak",
+    "DEMOGRAPHIC_LABEL": "Demografski upitnik",
+    "OPEN": "Otvori",
+    "COMPLETED": "Završeno",
+    "NONE": "Za ovo istraživanje trenutno nema dostupnih upitnika."
+  }
+}
