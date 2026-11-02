@@ -1,15 +1,17 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { StateService } from '../services/state.service';
 import { DatabaseService, ConsentSection } from '../services/database.service';
+import { toSafeHtml } from '../shared/safe-html';
 
 /** A section rendered in the participant's own locked language — resolved once here instead of
  *  picking Sr/En fields all over the template. */
 interface DisplaySection {
   title: string | null;
-  body: string;
+  body: SafeHtml;
 }
 
 @Component({
@@ -23,6 +25,7 @@ export class ConsentComponent {
   private state = inject(StateService);
   private db = inject(DatabaseService);
   private router = inject(Router);
+  private sanitizer = inject(DomSanitizer);
 
   readonly checked = signal(false);
   readonly isSubmitting = signal(false);
@@ -39,7 +42,9 @@ export class ConsentComponent {
     const sr = s.lang === 'sr';
     return s.consentSections.map((section: ConsentSection) => ({
       title: (sr ? section.titleSr : section.titleEn) || null,
-      body: sr ? section.bodySr : section.bodyEn,
+      // Formatted text (or an older plain text): the server already sanitized it, this is the second line of defence.
+      // Angular's own sanitizer would strip every style attribute (alignment, colours), so the result is marked trusted here.
+      body: this.sanitizer.bypassSecurityTrustHtml(toSafeHtml((sr ? section.bodySr : section.bodyEn) ?? '')),
     }));
   });
 

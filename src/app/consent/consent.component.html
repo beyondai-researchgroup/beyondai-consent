@@ -12,7 +12,7 @@
           @if (section.title) {
             <h2>{{ section.title }}</h2>
           }
-          <p>{{ section.body }}</p>
+          <div class="consent-body rich-content rich-content--read" [innerHTML]="section.body"></div>
         </section>
       }
 

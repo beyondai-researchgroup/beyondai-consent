@@ -9,6 +9,7 @@ import { neon } from '@neondatabase/serverless';
 import { sendMail } from './server/email/mailer.mjs';
 import { buildConsentEmail } from './server/email/consentEmail.mjs';
 import { buildThankYouEmail } from './server/email/thankYouEmail.mjs';
+import { cleanRichText } from './server/rich-text.mjs';
 import { DEFAULT_CONSENT_SECTIONS, DEFAULT_CHECKBOX_TEXT_SR, DEFAULT_CHECKBOX_TEXT_EN } from './server/consent-defaults.mjs';
 import { issueSurveyLinks, resolveOrIssuePortalLinks } from './server/tokens/issueSurveyLinks.mjs';
 import { createLocalSql } from './server/local-db.mjs';
@@ -77,13 +78,16 @@ async function seedDefaultsIfEmpty(sql, researchId) {
   `;
 }
 
+// A section body is formatted text (HTML) or an older plain text: both leave here as sanitized HTML.
+const withSafeBody = (s) => ({ ...s, bodySr: cleanRichText(s.bodySr) ?? '', bodyEn: cleanRichText(s.bodyEn) ?? '' });
+
 async function getConsentFormFor(sql, researchId) {
   if (researchId == null) {
     // No research assigned to this participant (e.g. a pre-Phase-A/B row, or the unused
     // classic-loader flow) — fall back to the original fixed defaults rather than failing, so
     // the Consent app never breaks for a participant with no ResearchId on file.
     return {
-      consentSections: DEFAULT_CONSENT_SECTIONS,
+      consentSections: DEFAULT_CONSENT_SECTIONS.map(withSafeBody),
       checkboxTextSr: DEFAULT_CHECKBOX_TEXT_SR,
       checkboxTextEn: DEFAULT_CHECKBOX_TEXT_EN,
     };
@@ -98,7 +102,7 @@ async function getConsentFormFor(sql, researchId) {
   `;
   return {
     consentSections: sections.map((s) => ({
-      titleSr: s.TitleSr, titleEn: s.TitleEn, bodySr: s.BodySr, bodyEn: s.BodyEn,
+      titleSr: s.TitleSr, titleEn: s.TitleEn, bodySr: cleanRichText(s.BodySr) ?? '', bodyEn: cleanRichText(s.BodyEn) ?? '',
     })),
     checkboxTextSr: research[0]?.ConsentCheckboxTextSr ?? DEFAULT_CHECKBOX_TEXT_SR,
     checkboxTextEn: research[0]?.ConsentCheckboxTextEn ?? DEFAULT_CHECKBOX_TEXT_EN,
