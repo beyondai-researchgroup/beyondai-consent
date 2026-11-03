@@ -7,6 +7,7 @@ import express from 'express';
 import cors from 'cors';
 import { neon } from '@neondatabase/serverless';
 import { sendMail } from './server/email/mailer.mjs';
+import { resolveBranding, NEUTRAL_BRAND_NAME } from './server/email/branding.mjs';
 import { buildConsentEmail } from './server/email/consentEmail.mjs';
 import { buildThankYouEmail } from './server/email/thankYouEmail.mjs';
 import { cleanRichText } from './server/rich-text.mjs';
@@ -113,7 +114,7 @@ async function getConsentFormFor(sql, researchId) {
 // same "does this participant need consent text, and in which language(s)" payload shape,
 // resolved from whichever row lookup found them. Part E's UsesConsentForm=false short-circuit
 // (skip seeding/fetching ConsentSection entirely) applies identically either way.
-async function buildParticipantCheckPayload(sql, { researchId, language, consentGivenAt, usesConsentForm, consentLanguageSr, consentLanguageEn, isTestParticipant }) {
+async function buildParticipantCheckPayload(sql, { researchId, language, consentGivenAt, usesConsentForm, consentLanguageSr, consentLanguageEn, isTestParticipant, showBranding }) {
   const consentForm = usesConsentForm ? await getConsentFormFor(sql, researchId) : {};
   return {
     exists: true,
@@ -127,6 +128,8 @@ async function buildParticipantCheckPayload(sql, { researchId, language, consent
     // (checkParticipant already knows it if resolved via /r/:slug, but this also covers the bare
     // /login path, where it's only known AFTER the lookup succeeds).
     researchId: researchId ?? null,
+    // false = the researcher hides the BeyondAI logo / name from participants of this research.
+    showBranding: showBranding !== false,
     ...consentForm,
   };
 }
@@ -150,16 +153,16 @@ app.get('/api/research/:slug', async (req, res) => {
   }
   try {
     const sql = getDb();
-    const rows = await sql`SELECT "Id", "Name", "ConsentPortalActive" FROM "Research" WHERE "Slug" = ${slug} LIMIT 1`;
+    const rows = await sql`SELECT "Id", "Name", "ConsentPortalActive", "ShowBeyondAiBranding" FROM "Research" WHERE "Slug" = ${slug} LIMIT 1`;
     if (!rows.length) {
       res.status(404).json({ error: 'NOT_FOUND' });
       return;
     }
     if (rows[0].ConsentPortalActive !== true) {
-      res.status(403).json({ error: 'NOT_ACTIVE' });
+      res.status(403).json({ error: 'NOT_ACTIVE', showBranding: rows[0].ShowBeyondAiBranding !== false });
       return;
     }
-    res.json({ id: rows[0].Id, name: rows[0].Name });
+    res.json({ id: rows[0].Id, name: rows[0].Name, showBranding: rows[0].ShowBeyondAiBranding !== false });
   } catch (err) {
     console.error('[DB] research resolve error:', err);
     res.status(500).json({ error: 'Database error' });
@@ -176,7 +179,7 @@ async function lookupParticipantRows(sql, participantId, researchId) {
   if (researchId != null) {
     return sql`
       SELECT p."Language", p."ConsentGivenAt", p."ResearchId", p."IsTestParticipant", COALESCE(r."UsesConsentForm", TRUE) AS "UsesConsentForm",
-             COALESCE(r."ConsentLanguageSr", TRUE) AS "ConsentLanguageSr", COALESCE(r."ConsentLanguageEn", TRUE) AS "ConsentLanguageEn"
+             COALESCE(r."ConsentLanguageSr", TRUE) AS "ConsentLanguageSr", COALESCE(r."ConsentLanguageEn", TRUE) AS "ConsentLanguageEn", COALESCE(r."ShowBeyondAiBranding", TRUE) AS "ShowBeyondAiBranding"
       FROM "Participant" p
       LEFT JOIN "Research" r ON r."Id" = p."ResearchId"
       WHERE p."ParticipantId" = ${participantId} AND p."ResearchId" = ${researchId}
@@ -184,7 +187,7 @@ async function lookupParticipantRows(sql, participantId, researchId) {
   }
   return sql`
     SELECT p."Language", p."ConsentGivenAt", p."ResearchId", p."IsTestParticipant", COALESCE(r."UsesConsentForm", TRUE) AS "UsesConsentForm",
-           COALESCE(r."ConsentLanguageSr", TRUE) AS "ConsentLanguageSr", COALESCE(r."ConsentLanguageEn", TRUE) AS "ConsentLanguageEn"
+           COALESCE(r."ConsentLanguageSr", TRUE) AS "ConsentLanguageSr", COALESCE(r."ConsentLanguageEn", TRUE) AS "ConsentLanguageEn", COALESCE(r."ShowBeyondAiBranding", TRUE) AS "ShowBeyondAiBranding"
     FROM "Participant" p
     LEFT JOIN "Research" r ON r."Id" = p."ResearchId"
     WHERE p."ParticipantId" = ${participantId}
@@ -244,7 +247,7 @@ app.get('/api/participant/:id', async (req, res) => {
       await buildParticipantCheckPayload(sql, {
         researchId: r.ResearchId, language: r.Language, consentGivenAt: r.ConsentGivenAt,
         usesConsentForm: r.UsesConsentForm, consentLanguageSr: r.ConsentLanguageSr, consentLanguageEn: r.ConsentLanguageEn,
-        isTestParticipant: true,
+        isTestParticipant: true, showBranding: r.ShowBeyondAiBranding,
       })
     );
   } catch (err) {
@@ -271,7 +274,7 @@ app.get('/api/link/:token', async (req, res) => {
       SELECT sat."ParticipantId", sat."ExpiresAt", p."ResearchId", p."Language", p."ConsentGivenAt",
              COALESCE(r."UsesConsentForm", TRUE) AS "UsesConsentForm",
              COALESCE(r."ConsentLanguageSr", TRUE) AS "ConsentLanguageSr",
-             COALESCE(r."ConsentLanguageEn", TRUE) AS "ConsentLanguageEn"
+             COALESCE(r."ConsentLanguageEn", TRUE) AS "ConsentLanguageEn", COALESCE(r."ShowBeyondAiBranding", TRUE) AS "ShowBeyondAiBranding"
       FROM "SurveyAccessToken" sat
       JOIN "Participant" p ON p."Guid" = sat."ParticipantGuid"
       LEFT JOIN "Research" r ON r."Id" = p."ResearchId"
@@ -284,7 +287,7 @@ app.get('/api/link/:token', async (req, res) => {
     }
     const row = rows[0];
     if (new Date(row.ExpiresAt) < new Date()) {
-      res.status(410).json({ error: 'EXPIRED' });
+      res.status(410).json({ error: 'EXPIRED', showBranding: row.ShowBeyondAiBranding !== false });
       return;
     }
     // 2026-09-09 master pause switch — Mode 2 (mailing-list) recipients already hold a real
@@ -292,12 +295,13 @@ app.get('/api/link/:token', async (req, res) => {
     // minted (or the mint-side check in mailing-list.mjs was bypassed by an older token). Same
     // isPortalActive gate the other 4 endpoints in this file already use.
     if (row.ResearchId != null && !(await isPortalActive(sql, row.ResearchId))) {
-      res.status(403).json({ error: 'NOT_ACTIVE' });
+      res.status(403).json({ error: 'NOT_ACTIVE', showBranding: row.ShowBeyondAiBranding !== false });
       return;
     }
     const payload = await buildParticipantCheckPayload(sql, {
       researchId: row.ResearchId, language: row.Language, consentGivenAt: row.ConsentGivenAt,
       usesConsentForm: row.UsesConsentForm, consentLanguageSr: row.ConsentLanguageSr, consentLanguageEn: row.ConsentLanguageEn,
+      showBranding: row.ShowBeyondAiBranding,
     });
     // payload's own `researchId` (see buildParticipantCheckPayload) is what the frontend threads
     // into its next scoped call — closes the same latent ambiguity gap for magic-link visitors
@@ -312,14 +316,14 @@ app.get('/api/link/:token', async (req, res) => {
 async function lookupConsentSubmitRows(sql, participantId, researchId) {
   if (researchId != null) {
     return sql`
-      SELECT p."Email", p."Language", p."ResearchId", p."GenericTaskId", p."IsTestParticipant", r."UsesPsychTests", r."UsesTlx", r."TaskType", r."StudyDisplayName", r."Name" AS "ResearchName", r."EmailSenderName", r."UsesDemographics"
+      SELECT p."Email", p."Language", p."ResearchId", p."GenericTaskId", p."IsTestParticipant", r."UsesPsychTests", r."UsesTlx", r."TaskType", r."StudyDisplayName", r."Name" AS "ResearchName", r."EmailSenderName", r."UsesDemographics", r."ShowBeyondAiBranding"
       FROM "Participant" p
       LEFT JOIN "Research" r ON r."Id" = p."ResearchId"
       WHERE p."ParticipantId" = ${participantId} AND p."ResearchId" = ${researchId}
     `;
   }
   return sql`
-    SELECT p."Email", p."Language", p."ResearchId", p."GenericTaskId", p."IsTestParticipant", r."UsesPsychTests", r."UsesTlx", r."TaskType", r."StudyDisplayName", r."Name" AS "ResearchName", r."EmailSenderName", r."UsesDemographics"
+    SELECT p."Email", p."Language", p."ResearchId", p."GenericTaskId", p."IsTestParticipant", r."UsesPsychTests", r."UsesTlx", r."TaskType", r."StudyDisplayName", r."Name" AS "ResearchName", r."EmailSenderName", r."UsesDemographics", r."ShowBeyondAiBranding"
     FROM "Participant" p
     LEFT JOIN "Research" r ON r."Id" = p."ResearchId"
     WHERE p."ParticipantId" = ${participantId}
@@ -406,7 +410,9 @@ app.post('/api/consent/submit', async (req, res) => {
     const usesDemographics = rows[0].UsesDemographics ?? false;
     // Same fallback chain as studyDisplayName below: an explicit override, else the research's
     // display name, else its raw Name, else sendMail's/each email builder's own hardcoded default.
-    const senderName = rows[0].EmailSenderName || rows[0].StudyDisplayName || rows[0].ResearchName || undefined;
+    // Branding off (Research.ShowBeyondAiBranding): neutral header / From name and no contact line (see server/email/branding.mjs).
+    const branding = resolveBranding({ showBranding: rows[0].ShowBeyondAiBranding, emailSenderName: rows[0].EmailSenderName, studyDisplayName: rows[0].StudyDisplayName, name: rows[0].ResearchName });
+    const senderName = branding.senderName ?? undefined;
 
     // Scoped by the ResearchId the SELECT above already resolved (rows[0].ResearchId, not the
     // raw request param) — a real bug caught live during this feature's own verification: with a
@@ -444,11 +450,11 @@ app.post('/api/consent/submit', async (req, res) => {
       });
       const urls = [rei40Url, bigfiveUrl, nasaTlxUrl].filter(Boolean);
 
-      const { subject, html } = buildConsentEmail(finalLang, { urls, taskUrl, demographicUrl, senderName });
+      const { subject, html } = buildConsentEmail(finalLang, { urls, taskUrl, demographicUrl, senderName, hideContact: branding.hideContact });
       await sendMail({ to: email, subject, html, fromName: senderName });
     } else {
-      const studyDisplayName = rows[0].StudyDisplayName || rows[0].ResearchName || 'BeyondAI';
-      const { subject, html } = buildThankYouEmail(finalLang, { studyDisplayName, senderName });
+      const studyDisplayName = rows[0].StudyDisplayName || rows[0].ResearchName || (branding.hideContact ? NEUTRAL_BRAND_NAME : 'BeyondAI');
+      const { subject, html } = buildThankYouEmail(finalLang, { studyDisplayName, senderName, hideContact: branding.hideContact });
       await sendMail({ to: email, subject, html, fromName: senderName });
     }
 

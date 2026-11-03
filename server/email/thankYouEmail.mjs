@@ -34,7 +34,7 @@ const DEFAULT_SENDER_NAME = 'BeyondAI Research Group';
  * @param {{ studyDisplayName: string, senderName?: string }} params
  * @returns {{ subject: string, html: string }}
  */
-export function buildThankYouEmail(lang, { studyDisplayName, senderName }) {
+export function buildThankYouEmail(lang, { studyDisplayName, senderName, hideContact = false }) {
   const t = COPY[lang] ?? COPY.sr;
   // studyDisplayName is researcher-supplied free text (Study Configuration page), not a fixed
   // literal like the rest of this template's copy — escape it before interpolating into HTML.
@@ -59,11 +59,11 @@ export function buildThankYouEmail(lang, { studyDisplayName, senderName }) {
             <p style="margin:0;font-size:15px;line-height:1.6;color:#374151;">${t.body(safeName)}</p>
           </td>
         </tr>
-        <tr>
+${hideContact ? '' : `<tr>
           <td style="padding:20px 32px;background:#f9fafb;border-top:1px solid #e5e7eb;">
             <p style="margin:0;font-size:12px;color:#6b7280;">${t.footer} <a href="mailto:beyondai.researchgroup@gmail.com" style="color:#16a34a;">beyondai.researchgroup@gmail.com</a></p>
           </td>
-        </tr>
+        </tr>`}
       </table>
     </td></tr>
   </table>

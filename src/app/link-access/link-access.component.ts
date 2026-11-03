@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { StateService } from '../services/state.service';
+import { BrandingService } from '../services/branding.service';
 import { DatabaseService } from '../services/database.service';
 
 type LinkStatus = 'loading' | 'error';
@@ -72,6 +73,7 @@ export class LinkAccessComponent implements OnInit {
   private router = inject(Router);
   private db = inject(DatabaseService);
   private state = inject(StateService);
+  private branding = inject(BrandingService);
   private translate = inject(TranslateService);
 
   readonly status = signal<LinkStatus>('loading');
@@ -86,6 +88,7 @@ export class LinkAccessComponent implements OnInit {
     }
 
     const result = await this.db.resolveLink(token);
+    if (result.showBranding !== undefined) this.branding.set(result.showBranding !== false);
     if (!result.ok) {
       this.status.set('error');
       this.errorCode.set(result.error);

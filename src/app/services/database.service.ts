@@ -35,6 +35,8 @@ export interface ParticipantCheckResult {
    *  LoginComponent can thread it into the next scoped call (submitConsent/issueLinks)
    *  regardless of which entry point (bare /login, /r/:slug, /link/:token) resolved it. */
   researchId?: number | null;
+  /** false = the researcher hides the BeyondAI logo / name from participants of this research. */
+  showBranding?: boolean;
 }
 
 export type ConsentSubmitResult =
@@ -46,8 +48,8 @@ export type ConsentSubmitResult =
  *  issueLinks, scoping each of those lookups and making the AMBIGUOUS_PARTICIPANT_ID case
  *  structurally unreachable for anyone who arrives via their research's own link. */
 export type ResolveResearchResult =
-  | { ok: true; id: number; name: string }
-  | { ok: false; error: 'NOT_FOUND' | 'NOT_ACTIVE' | 'SERVER_ERROR' };
+  | { ok: true; id: number; name: string; showBranding?: boolean }
+  | { ok: false; error: 'NOT_FOUND' | 'NOT_ACTIVE' | 'SERVER_ERROR'; showBranding?: boolean };
 
 /** Part E of the platform re-architecture — one module's resolved state on the consent-OFF
  *  portal: either a fresh/reused link to open, or an acknowledgment that it's already completed.
@@ -71,7 +73,7 @@ export type IssueLinksResult =
 // one, it's baked into the token).
 export type ResolveLinkResult =
   | ({ ok: true; participantId: string } & ParticipantCheckResult)
-  | { ok: false; error: 'NOT_FOUND' | 'EXPIRED' | 'NOT_ACTIVE' | 'SERVER_ERROR' };
+  | { ok: false; error: 'NOT_FOUND' | 'EXPIRED' | 'NOT_ACTIVE' | 'SERVER_ERROR'; showBranding?: boolean };
 
 @Injectable({ providedIn: 'root' })
 export class DatabaseService {
@@ -107,12 +109,12 @@ export class DatabaseService {
   async resolveResearch(slug: string): Promise<ResolveResearchResult> {
     try {
       const res = await firstValueFrom(
-        this.http.get<{ id: number; name: string }>(`/api/research/${encodeURIComponent(slug)}`).pipe(timeout(REQUEST_TIMEOUT_MS))
+        this.http.get<{ id: number; name: string; showBranding?: boolean }>(`/api/research/${encodeURIComponent(slug)}`).pipe(timeout(REQUEST_TIMEOUT_MS))
       );
       return { ok: true, ...res };
     } catch (err: any) {
       const code = err?.error?.error;
-      if (code === 'NOT_FOUND' || code === 'NOT_ACTIVE') return { ok: false, error: code };
+      if (code === 'NOT_FOUND' || code === 'NOT_ACTIVE') return { ok: false, error: code, showBranding: err?.error?.showBranding };
       return { ok: false, error: 'SERVER_ERROR' };
     }
   }
@@ -125,7 +127,7 @@ export class DatabaseService {
       return { ok: true, ...res };
     } catch (err: any) {
       const code = err?.error?.error;
-      if (code === 'NOT_FOUND' || code === 'EXPIRED' || code === 'NOT_ACTIVE') return { ok: false, error: code };
+      if (code === 'NOT_FOUND' || code === 'EXPIRED' || code === 'NOT_ACTIVE') return { ok: false, error: code, showBranding: err?.error?.showBranding };
       return { ok: false, error: 'SERVER_ERROR' };
     }
   }

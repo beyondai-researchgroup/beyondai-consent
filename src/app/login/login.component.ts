@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { StateService } from '../services/state.service';
+import { BrandingService } from '../services/branding.service';
 import { DatabaseService, ParticipantCheckResult } from '../services/database.service';
 
 @Component({
@@ -15,6 +16,7 @@ import { DatabaseService, ParticipantCheckResult } from '../services/database.se
 export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder);
   private state = inject(StateService);
+  readonly branding = inject(BrandingService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private db = inject(DatabaseService);
@@ -71,6 +73,7 @@ export class LoginComponent implements OnInit {
     this.researchResolving.set(true);
     const result = await this.db.resolveResearch(slug);
     this.researchResolving.set(false);
+    if (result.showBranding !== undefined) this.branding.set(result.showBranding !== false);
     if (!result.ok) {
       if (result.error === 'NOT_ACTIVE') {
         this.researchNotActive.set(true);
@@ -101,6 +104,7 @@ export class LoginComponent implements OnInit {
 
     try {
       const result = await this.db.checkParticipant(participantId, this.researchId() ?? undefined);
+      if (result.showBranding !== undefined) this.branding.set(result.showBranding !== false);
       if (!result.exists) {
         this.participantNotFound.set(true);
         this.isChecking.set(false);

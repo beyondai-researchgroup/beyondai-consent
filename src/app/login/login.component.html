@@ -1,7 +1,9 @@
 <div class="page-centered">
   <div class="login-container">
     <header class="login-header">
-      <h1 class="login-title">{{ 'LOGIN.TITLE' | translate }}</h1>
+      @if (branding.visible()) {
+        <h1 class="login-title">{{ 'LOGIN.TITLE' | translate }}</h1>
+      }
       @if (researchName(); as name) {
         <p class="login-subtitle">{{ name }}</p>
       } @else {
