@@ -257,3 +257,7 @@ a { color: var(--color-accent); text-decoration: none; }
   > :first-child, .ProseMirror > :first-child { margin-top: 0; }
   .ProseMirror > :last-child, > :last-child { margin-bottom: 0; }
 }
+
+/* Text pasted into the consent editor can carry its own dark grey/navy colour, unreadable on the dark theme: there the theme's colour wins
+   (in the light theme the researcher's colours are kept). Global because the body is injected HTML. */
+:root:not([data-theme='light']) .consent-body [style*='color'] { color: inherit !important; }
